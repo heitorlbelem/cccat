@@ -1,4 +1,12 @@
-import { signup } from "../src/signup"
+import { AccountDAOInMemory } from "../src/AccountDAO"
+import { Signup } from "../src/Signup"
+
+let signup: Signup
+
+beforeEach(() => {
+    const accountDAOInMemory = new AccountDAOInMemory()
+    signup = new Signup(accountDAOInMemory)
+})
 
 test("Deve criar um passageiro", async () => {
     const input = {
@@ -8,7 +16,7 @@ test("Deve criar um passageiro", async () => {
         password: "123456",
         isPassenger: true
     }
-    const signupOutput = await signup(input)
+    const signupOutput = await signup.execute(input)
     expect(signupOutput.accountId).toBeDefined()
 })
 
@@ -20,8 +28,8 @@ test("Não deve criar contas duplicadas", async () => {
         password: "123456",
         isPassenger: true
     }
-    await signup(input)
-    await expect(() => signup(input)).rejects.toThrow(new Error("Account already exist"))
+    await signup.execute(input)
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Account already exist"))
 })
 
 test("Não deve criar um passageiro com nome inválido", async () => {
@@ -32,7 +40,7 @@ test("Não deve criar um passageiro com nome inválido", async () => {
         password: "123456",
         isPassenger: true
     }
-    await expect(() => signup(input)).rejects.toThrow(new Error("Invalid name"))
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid name"))
 })
 
 test("Não deve criar um passageiro com email inválido", async () => {
@@ -43,7 +51,7 @@ test("Não deve criar um passageiro com email inválido", async () => {
         password: "123456",
         isPassenger: true
     }
-    await expect(() => signup(input)).rejects.toThrow(new Error("Invalid e-mail"))
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid e-mail"))
 })
 
 test("Não deve criar um passageiro com cpf inválido", async () => {
@@ -54,7 +62,7 @@ test("Não deve criar um passageiro com cpf inválido", async () => {
         password: "123456",
         isPassenger: true
     }
-    await expect(() => signup(input)).rejects.toThrow(new Error("Invalid CPF"))
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid CPF"))
 })
 
 test("Não deve criar um motorista com placa inválida", async () => {
@@ -66,5 +74,5 @@ test("Não deve criar um motorista com placa inválida", async () => {
         isDriver: true,
         carPlate: "123AAA",
     }
-    await expect(() => signup(input)).rejects.toThrow(new Error("Invalid car plate"))
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid car plate"))
 })
