@@ -1,8 +1,7 @@
-import crypto from "crypto";
 import { AccountRepository} from "./AccountRepository";
 import MailerGateway from "./MailerGateway";
 import { Account } from "./Account";
-import { inject, Registry } from "./DI";
+import { inject } from "./DI";
 
 export default class Signup {
 	@inject("accountRepository")
