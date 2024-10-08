@@ -16,7 +16,6 @@ app.post("/signup", async function (req, res) {
 		const mailerGateway = new MailerGatewayMemory();
 		const signup = new Signup(accountRepository, mailerGateway);
 		const output = await signup.execute(input);
-		console.log(output)
 		res.json(output);
 	} catch (e: any) {
 		res.status(422).json({ message: e.message });
