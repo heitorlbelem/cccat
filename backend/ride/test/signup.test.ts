@@ -1,4 +1,5 @@
 import { AccountRepositoryDatabase, AccountRepositoryMemory } from "../src/AccountRepository";
+import { Registry } from "../src/DI";
 import GetAccount from "../src/GetAccount";
 import { MailerGatewayMemory } from "../src/MailerGateway";
 import Signup from "../src/Signup";
@@ -9,10 +10,10 @@ let getAccount: GetAccount;
 
 // Integration Narrow -> Broad
 beforeEach(() => {
-	const accountRepository = new AccountRepositoryDatabase();
-	const mailerGateway = new MailerGatewayMemory();
-	signup = new Signup(accountRepository, mailerGateway);
-	getAccount = new GetAccount(accountRepository);
+	Registry.getInstance().provide("accountRepository",  new AccountRepositoryDatabase())
+	Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory())
+	signup = new Signup();
+	getAccount = new GetAccount();
 });
 
 test("Deve criar a conta de um passageiro", async function () {

@@ -4,17 +4,19 @@ import { AccountRepositoryDatabase } from "./AccountRepository";
 import GetAccount from "./GetAccount";
 import cors from "cors";
 import { MailerGatewayMemory } from "./MailerGateway";
+import { Registry } from "./DI";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
+Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase)
+Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory)
+
 app.post("/signup", async function (req, res) {
 	const input = req.body;
 	try {
-		const accountRepository = new AccountRepositoryDatabase();
-		const mailerGateway = new MailerGatewayMemory();
-		const signup = new Signup(accountRepository, mailerGateway);
+		const signup = new Signup();
 		const output = await signup.execute(input);
 		res.json(output);
 	} catch (e: any) {
@@ -24,7 +26,7 @@ app.post("/signup", async function (req, res) {
 
 app.get("/accounts/:accountId", async function (req, res) {
 	const accountRepository = new AccountRepositoryDatabase();
-	const getAccount = new GetAccount(accountRepository);
+	const getAccount = new GetAccount();
 	const output = await getAccount.execute(req.params.accountId);
 	res.json(output);
 });
