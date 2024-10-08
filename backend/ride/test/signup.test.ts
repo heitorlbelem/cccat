@@ -1,4 +1,4 @@
-import { AccountRepositoryDatabase, AccountRepositoryMemory } from "../src/AccountRepository";
+import { AccountRepositoryDatabase } from "../src/AccountRepository";
 import { Registry } from "../src/DI";
 import GetAccount from "../src/GetAccount";
 import { MailerGatewayMemory } from "../src/MailerGateway";

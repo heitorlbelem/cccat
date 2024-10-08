@@ -25,7 +25,6 @@ app.post("/signup", async function (req, res) {
 });
 
 app.get("/accounts/:accountId", async function (req, res) {
-	const accountRepository = new AccountRepositoryDatabase();
 	const getAccount = new GetAccount();
 	const output = await getAccount.execute(req.params.accountId);
 	res.json(output);
