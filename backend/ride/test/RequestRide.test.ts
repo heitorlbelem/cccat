@@ -1,11 +1,11 @@
-import { AccountRepositoryDatabase } from "../src/AccountRepository";
-import { Registry } from "../src/DI";
-import GetAccount from "../src/GetAccount";
-import GetRide from "../src/GetRide";
-import { MailerGatewayMemory } from "../src/MailerGateway";
-import RequestRide from "../src/RequestRide";
-import { RideRepositoryDatabase } from "../src/RideRepository";
-import Signup from "../src/Signup";
+import { AccountRepositoryDatabase } from "../src/infra/repository/AccountRepository";
+import { PgPromiseAdapter } from "../src/infra/database/DatabaseConnection";
+import { Registry } from "../src/infra/di/DI";
+import { MailerGatewayMemory } from "../src/infra/gateway/MailerGateway";
+import { RideRepositoryDatabase } from "../src/infra/repository/RideRepository";
+import Signup from "../src/application/usecase/Signup";
+import GetRide from "../src/application/usecase/GetRide";
+import RequestRide from "../src/application/usecase/RequestRide";
 
 let signup: Signup;
 let requestRide: RequestRide;
@@ -13,6 +13,7 @@ let getRide: GetRide;
 
 // Integration Narrow -> Broad
 beforeEach(() => {
+  Registry.getInstance().provide("databaseConnection",  new PgPromiseAdapter())
 	Registry.getInstance().provide("accountRepository",  new AccountRepositoryDatabase())
 	Registry.getInstance().provide("rideRepository",  new RideRepositoryDatabase())
 	Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory())
@@ -69,3 +70,8 @@ test("Não deve solicitar uma corrida se a conta não for de passageiro", async 
   await expect(() => requestRide.execute(inputRequestRide)).rejects
     .toThrow(new Error("Must be a passenger"))
 });
+
+afterEach(async () => {
+  const connection = Registry.getInstance().inject('databaseConnection')
+  await connection.close()
+})

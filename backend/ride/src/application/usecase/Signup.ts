@@ -1,7 +1,8 @@
-import { AccountRepository} from "./AccountRepository";
-import MailerGateway from "./MailerGateway";
-import { Account } from "./Account";
-import { inject } from "./DI";
+
+import { AccountRepository } from "../../infra/repository/AccountRepository";
+import { inject } from "../../infra/di/DI";
+import MailerGateway from "../../infra/gateway/MailerGateway";
+import { Account } from "../../domain/Account";
 
 export default class Signup {
 	@inject("accountRepository")

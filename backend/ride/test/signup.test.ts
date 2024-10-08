@@ -1,14 +1,16 @@
-import { AccountRepositoryDatabase } from "../src/AccountRepository";
-import { Registry } from "../src/DI";
-import GetAccount from "../src/GetAccount";
-import { MailerGatewayMemory } from "../src/MailerGateway";
-import Signup from "../src/Signup";
+import { AccountRepositoryDatabase } from "../src/infra/repository/AccountRepository";
+import { PgPromiseAdapter } from "../src/infra/database/DatabaseConnection";
+import { Registry } from "../src/infra/di/DI";
+import { MailerGatewayMemory } from "../src/infra/gateway/MailerGateway";
+import GetAccount from "../src/application/usecase/GetAccount";
+import Signup from "../src/application/usecase/Signup";
 
 let signup: Signup;
 let getAccount: GetAccount;
 
 // Integration Narrow -> Broad
 beforeEach(() => {
+	Registry.getInstance().provide("databaseConnection",  new PgPromiseAdapter())
 	Registry.getInstance().provide("accountRepository",  new AccountRepositoryDatabase())
 	Registry.getInstance().provide("mailerGateway", new MailerGatewayMemory())
 	signup = new Signup();
@@ -55,3 +57,8 @@ test("Não deve criar a conta de um passageiro duplicado", async function () {
 	await signup.execute(input);
 	await expect(() => signup.execute(input)).rejects.toThrow(new Error("Duplicated account"));
 });
+
+afterEach(async () => {
+  const connection = Registry.getInstance().inject('databaseConnection')
+  await connection.close()
+})

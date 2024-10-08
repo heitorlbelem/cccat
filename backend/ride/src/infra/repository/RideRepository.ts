@@ -1,5 +1,7 @@
-import pgp from "pg-promise";
-import { Ride } from "./Ride";
+
+import { inject } from "../di/DI";
+import { DatabaseConnection } from "../database/DatabaseConnection";
+import { Ride } from "../../domain/Ride";
 
 // Port
 export interface RideRepository {
@@ -8,10 +10,11 @@ export interface RideRepository {
 }
 
 export class RideRepositoryDatabase implements RideRepository {
+  @inject("databaseConnection")
+  connection?: DatabaseConnection
+
   async getRideById(rideId: string): Promise<Ride | undefined> {
-    const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
-		const [rideData] = await connection.query("select * from ccca.ride where ride_id = $1", [rideId]);
-		await connection.$pool.end();
+		const [rideData] = await this.connection?.query("select * from ccca.ride where ride_id = $1", [rideId]);
     if(!rideData) throw new Error("Ride not found")
     return new Ride(
       rideData.ride_id,
@@ -26,8 +29,7 @@ export class RideRepositoryDatabase implements RideRepository {
   }
 
   async saveRide(ride: Ride): Promise<void> {
-    const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
-		await connection.query(`
+		await this.connection?.query(`
       insert into ccca.ride
       (ride_id, passenger_id, from_lat, from_long, to_lat, to_long, status, date)
       values ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -39,6 +41,5 @@ export class RideRepositoryDatabase implements RideRepository {
         ride.getStatus(), ride.getDate()
       ]
     );
-		await connection.$pool.end();
   }
 }
