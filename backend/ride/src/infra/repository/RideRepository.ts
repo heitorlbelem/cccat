@@ -7,6 +7,7 @@ import { Ride } from "../../domain/entity/Ride";
 export interface RideRepository {
 	getRideById (rideId: string): Promise<Ride | undefined>;
 	saveRide (ride: Ride): Promise<void>;
+  updateRide(ride: Ride): Promise<void>;
 }
 
 export class RideRepositoryDatabase implements RideRepository {
@@ -24,7 +25,8 @@ export class RideRepositoryDatabase implements RideRepository {
       parseFloat(rideData.to_lat),
       parseFloat(rideData.to_long),
       rideData.status,
-      rideData.date
+      rideData.date,
+      rideData.driver_id
     )
   }
 
@@ -41,5 +43,11 @@ export class RideRepositoryDatabase implements RideRepository {
         ride.getStatus(), ride.getDate()
       ]
     );
+  }
+
+  async updateRide(ride: Ride): Promise<void> {
+    await this.connection?.query("update ccca.ride set status = $1, driver_id = $2 where ride_id = $3",
+      [ride.getStatus(), ride.getDriverId(), ride.getRideId()]
+    )
   }
 }

@@ -5,7 +5,7 @@ export default class GetRide {
 	@inject("rideRepository")
 	rideRepository?: RideRepository
 
-	async execute (rideId: string) {
+	async execute (rideId: string): Promise<Output> {
     const ride = await this.rideRepository?.getRideById(rideId)
     if(!ride) throw new Error("Ride not found");
 
@@ -17,6 +17,18 @@ export default class GetRide {
       toLat: ride.getTo().getLat(),
       toLong: ride.getTo().getLong(),
       status: ride.getStatus(),
+      driverId: ride.getDriverId()
     }
 	}
+}
+
+type Output = {
+  rideId: string,
+  passengerId: string,
+  fromLat: number,
+  fromLong: number,
+  toLat: number,
+  toLong: number,
+  status: string,
+  driverId?: string
 }
