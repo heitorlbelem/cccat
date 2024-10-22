@@ -1,5 +1,5 @@
-import { Coord } from "./Coord";
-import { UUID } from "./UUID";
+import { Coord } from "../vo/Coord";
+import { UUID } from "../vo/UUID";
 
 export class Ride {
   private rideId: UUID;

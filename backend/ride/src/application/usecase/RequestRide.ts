@@ -1,7 +1,7 @@
 import { AccountRepository } from "../../infra/repository/AccountRepository"
 import { inject } from "../../infra/di/DI"
 import { RideRepository } from "../../infra/repository/RideRepository"
-import { Ride } from "../../domain/Ride"
+import { Ride } from "../../domain/entity/Ride"
 
 export default class RequestRide {
 	@inject("accountRepository")

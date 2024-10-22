@@ -1,7 +1,7 @@
 
 import { inject } from "../di/DI";
 import { DatabaseConnection } from "../database/DatabaseConnection";
-import { Account } from "../../domain/Account";
+import { Account } from "../../domain/entity/Account";
 
 // Port
 export interface AccountRepository {
