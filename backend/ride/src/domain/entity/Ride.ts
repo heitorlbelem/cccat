@@ -47,10 +47,6 @@ export class Ride {
     return this.status
   }
 
-  setStatus(newStatus: string) {
-    this.status = newStatus
-  }
-
   getDate() {
     return this.date
   }
@@ -59,7 +55,9 @@ export class Ride {
     return this.driverId?.getValue()
   }
 
-  setDriverId(driverId: string) {
+  accept(driverId: string) {
+    if(this.getStatus() !== "requested") throw new Error("Invalid status");
+    this.status = "accepted"
     this.driverId = new UUID(driverId)
   }
 }

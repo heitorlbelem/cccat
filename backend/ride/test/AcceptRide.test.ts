@@ -61,6 +61,41 @@ test("Deve aceitar uma corrida", async function () {
   expect(outputGetRide.driverId).toBe(outputSignupDriver.accountId)
 });
 
+test("Não deve aceitar uma corrida que já foi aceita", async function () {
+	const inputSignupPassenger = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "97456321558",
+		password: "123456",
+		isPassenger: true
+	};
+	const outputSignupPassenger = await signup.execute(inputSignupPassenger);
+	const inputSignupDriver = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "97456321558",
+		password: "123456",
+		isDriver: true,
+    carPlate: 'AAA9452'
+	};
+	const outputSignupDriver = await signup.execute(inputSignupDriver);
+	const inputRequestRide = {
+    passengerId: outputSignupPassenger.accountId,
+    fromLat: -23.5505,
+    toLat: -23.4605,
+    fromLong: -46.6333,
+    toLong: -46.5333
+  }
+  const outputRequestRide = await requestRide.execute(inputRequestRide)
+  const inputAcceptRide = {
+    rideId: outputRequestRide.rideId,
+    driverId: outputSignupDriver.accountId
+  }
+  await acceptRide.execute(inputAcceptRide)
+  expect(async () => await acceptRide.execute(inputAcceptRide)).rejects.toThrow(new Error("Invalid status"));
+  
+});
+
 afterEach(async () => {
   const connection = Registry.getInstance().inject('databaseConnection')
   await connection.close()
