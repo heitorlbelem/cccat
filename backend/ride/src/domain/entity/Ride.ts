@@ -60,4 +60,9 @@ export class Ride {
     this.status = "accepted"
     this.driverId = new UUID(driverId)
   }
+
+  start() {
+    if(this.getStatus() !== "accepted") throw new Error("Invalid status");
+    this.status = "in_progress"
+  }
 }
