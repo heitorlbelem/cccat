@@ -44,7 +44,6 @@ test('Não deve criar uma conta de passageiro com email inválido', async () => 
     password: '123456',
     isPassenger: true,
   }
-
   await expect(signup(input)).rejects.toThrow('Invalid email')
 })
 
