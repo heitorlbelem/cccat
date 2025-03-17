@@ -1,32 +1,29 @@
-export function validateCpf (cpf: string) {
-	if (!cpf) return false;
-	cpf = clean(cpf); 
-	if (cpf.length !== 11) return false;
-	if (allDigitsTheSame(cpf)) return false;
-	const dg1 = calculateDigit(cpf, 10);
-	const dg2 = calculateDigit(cpf, 11);
-	let actualDigit = extractDigit(cpf);  
-	return actualDigit == `${dg1}${dg2}`;
-}
-
-function clean (cpf: string) {
+function clean(cpf: string) {
 	return cpf.replace(/\D/g, "");
 }
 
-function allDigitsTheSame (cpf: string) {
-	const [firstDigit] = cpf;
-	return [...cpf].every(c => c === firstDigit);
+function allDigitsAreEqual(cpf: string) {
+	return cpf.split("").every((digit) => digit === cpf[0]);
 }
 
-function calculateDigit (cpf: string, factor: number) {
+function calculateVerificationDigit(cpf: string, factor: number) {
 	let total = 0;
+	let multiplier = factor;
 	for (const digit of cpf) {
-		if (factor > 1) total += parseInt(digit) * factor--;
+		if (multiplier < 2) break;
+		total += Number.parseInt(digit) * multiplier--;
 	}
 	const remainder = total % 11;
-	return (remainder < 2) ? 0 : 11 - remainder;
+	return remainder < 2 ? 0 : 11 - remainder;
 }
 
-function extractDigit (cpf: string) {
-	return cpf.slice(9);
+export function validateCpf(cpf: string) {
+	const cleanedCpf = clean(cpf);
+	if (cleanedCpf.length !== 11) return false;
+	if (allDigitsAreEqual(cpf)) return false;
+	const firstVerificationDigit = calculateVerificationDigit(cleanedCpf, 10);
+	const secondVerificationDigit = calculateVerificationDigit(cleanedCpf, 11);
+	const calculatedDigits = `${firstVerificationDigit}${secondVerificationDigit}`;
+	const extractedDigits = cleanedCpf.slice(9);
+	return extractedDigits === calculatedDigits;
 }
