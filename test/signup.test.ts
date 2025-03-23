@@ -1,4 +1,12 @@
-import { signup } from '../src/signup'
+import { AccountDAOMemory } from '../src/accountDAO'
+import { Signup } from '../src/signup'
+
+let sut: Signup
+
+beforeAll(() => {
+  const accountDAO = new AccountDAOMemory()
+  sut = new Signup(accountDAO)
+})
 
 test('Deve criar uma conta de passageiro', async () => {
   const input = {
@@ -8,7 +16,7 @@ test('Deve criar uma conta de passageiro', async () => {
     password: '123456',
     isPassenger: true,
   }
-  const responseSignup = await signup(input)
+  const responseSignup = await sut.execute(input)
   expect(responseSignup.id).toBeDefined()
 })
 
@@ -21,8 +29,8 @@ test('Não deve criar uma conta de passageiro com email duplicado', async () => 
     password: '123456',
     isPassenger: true,
   }
-  await signup(input)
-  await expect(signup(input)).rejects.toThrow('Email already in use')
+  await sut.execute(input)
+  await expect(sut.execute(input)).rejects.toThrow('Email already in use')
 })
 
 test('Não deve criar uma conta de passageiro com nome inválido', async () => {
@@ -33,7 +41,7 @@ test('Não deve criar uma conta de passageiro com nome inválido', async () => {
     password: '123456',
     isPassenger: true,
   }
-  await expect(signup(input)).rejects.toThrow('Invalid name')
+  await expect(sut.execute(input)).rejects.toThrow('Invalid name')
 })
 
 test('Não deve criar uma conta de passageiro com email inválido', async () => {
@@ -44,7 +52,7 @@ test('Não deve criar uma conta de passageiro com email inválido', async () => 
     password: '123456',
     isPassenger: true,
   }
-  await expect(signup(input)).rejects.toThrow('Invalid email')
+  await expect(sut.execute(input)).rejects.toThrow('Invalid email')
 })
 
 test('Não deve criar uma conta de passageiro com cpf inválido', async () => {
@@ -55,7 +63,7 @@ test('Não deve criar uma conta de passageiro com cpf inválido', async () => {
     password: '123456',
     isPassenger: true,
   }
-  await expect(signup(input)).rejects.toThrow('Invalid cpf')
+  await expect(sut.execute(input)).rejects.toThrow('Invalid cpf')
 })
 
 test('Não deve criar uma conta de motorista com placa inválida', async () => {
@@ -67,5 +75,5 @@ test('Não deve criar uma conta de motorista com placa inválida', async () => {
     isDriver: true,
     carPlate: '123456',
   }
-  await expect(signup(input)).rejects.toThrow('Invalid car plate')
+  await expect(sut.execute(input)).rejects.toThrow('Invalid car plate')
 })

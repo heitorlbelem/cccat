@@ -10,6 +10,7 @@ test('Deve criar uma conta de passageiro', async () => {
     password: '123456',
     isPassenger: true,
   }
+
   const responseSignup = await axios.post('http://localhost:3000/signup', input)
   expect(responseSignup.status).toBe(201)
   const outputSignup = responseSignup.data

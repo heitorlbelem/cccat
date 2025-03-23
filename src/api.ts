@@ -1,14 +1,16 @@
 import express from 'express'
-import { signup } from './signup'
+import { Signup } from './signup'
+import { AccountDAODatabase } from './accountDAO'
 
 const app = express()
 app.use(express.json())
 
 app.post('/signup', async (req, res) => {
   const input = req.body
-  console.log('Signup', input)
+  const accountDAO = new AccountDAODatabase()
+  const signup = new Signup(accountDAO)
   try {
-    const result = await signup(input)
+    const result = await signup.execute(input)
     return res.status(201).json({ accountId: result.id })
   } catch (err: any) {
     return res.status(422).json({ message: err.message })
