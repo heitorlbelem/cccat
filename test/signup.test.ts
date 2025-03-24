@@ -22,18 +22,24 @@ test('Deve criar uma conta de passageiro', async () => {
     password: '123456',
     isPassenger: true,
   }
-  const mailerSpy = sinon.spy(MailerGatewayMemory.prototype, 'send')
-  const outputSignupt = await sut.execute(input)
-  const outputGetAccount = await getAccount.execute(outputSignupt.id)
-  expect(outputSignupt.id).toBeDefined()
+  const mailerMock = sinon.mock(MailerGatewayMemory.prototype)
+  mailerMock
+    .expects('send')
+    .withArgs(input.email, 'Welcome!', 'Your account was created')
+    .once()
+    .callsFake(() => {
+      console.log('e-mail sent')
+    })
+  const outputSignup = await sut.execute(input)
+  const outputGetAccount = await getAccount.execute(outputSignup.id)
+  expect(outputSignup.id).toBeDefined()
   expect(outputGetAccount.name).toBe(input.name)
   expect(outputGetAccount.email).toBe(input.email)
   expect(outputGetAccount.cpf).toBe(input.cpf)
   expect(outputGetAccount.isPassenger).toBe(true)
   expect(outputGetAccount.password).toBe(input.password)
-  expect(mailerSpy.calledOnce).toBe(true)
-  expect(mailerSpy.calledWith(input.email, 'Welcome!', 'Your account was created')).toBe(true)
-  mailerSpy.restore()
+  mailerMock.verify()
+  mailerMock.restore()
 })
 
 test('Não deve criar uma conta de passageiro com email duplicado', async () => {
