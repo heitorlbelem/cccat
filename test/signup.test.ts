@@ -22,7 +22,7 @@ test('Deve criar uma conta de passageiro', async () => {
     password: '123456',
     isPassenger: true,
   }
-  const mailerStub = sinon.stub(MailerGatewayMemory.prototype, 'send').resolves()
+  const mailerSpy = sinon.spy(MailerGatewayMemory.prototype, 'send')
   const outputSignupt = await sut.execute(input)
   const outputGetAccount = await getAccount.execute(outputSignupt.id)
   expect(outputSignupt.id).toBeDefined()
@@ -31,7 +31,9 @@ test('Deve criar uma conta de passageiro', async () => {
   expect(outputGetAccount.cpf).toBe(input.cpf)
   expect(outputGetAccount.isPassenger).toBe(true)
   expect(outputGetAccount.password).toBe(input.password)
-  mailerStub.restore()
+  expect(mailerSpy.calledOnce).toBe(true)
+  expect(mailerSpy.calledWith(input.email, 'Welcome!', 'Your account was created')).toBe(true)
+  mailerSpy.restore()
 })
 
 test('Não deve criar uma conta de passageiro com email duplicado', async () => {
