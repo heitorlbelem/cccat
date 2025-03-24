@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
 import { validateCpf } from './validateCpf'
 import type { AccountDAO } from './accountDAO'
+import type { MailerGateway } from './mailerGateway'
 
 interface CreateAccountInput {
   name: string
@@ -13,7 +14,10 @@ interface CreateAccountInput {
 }
 
 export class Signup {
-  constructor(private readonly accountDAO: AccountDAO) {}
+  constructor(
+    private readonly accountDAO: AccountDAO,
+    private readonly mailerGateway: MailerGateway
+  ) {}
 
   async execute(input: CreateAccountInput): Promise<{ id: string }> {
     const id = crypto.randomUUID()
@@ -34,6 +38,7 @@ export class Signup {
       isDriver: input.isDriver,
       password: input.password,
     })
+    await this.mailerGateway.send(input.email, 'Welcome!', 'Your account was created')
     return { id }
   }
 }

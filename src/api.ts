@@ -2,6 +2,7 @@ import express from 'express'
 import { Signup } from './signup'
 import { AccountDAODatabase } from './accountDAO'
 import { GetAccount } from './getAccount'
+import { MailerGatewayMemory } from './mailerGateway'
 
 const app = express()
 app.use(express.json())
@@ -9,7 +10,8 @@ app.use(express.json())
 app.post('/signup', async (req, res) => {
   const input = req.body
   const accountDAO = new AccountDAODatabase()
-  const signup = new Signup(accountDAO)
+  const mailerGateway = new MailerGatewayMemory()
+  const signup = new Signup(accountDAO, mailerGateway)
   try {
     const result = await signup.execute(input)
     return res.status(201).json({ id: result.id })

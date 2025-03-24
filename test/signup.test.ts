@@ -1,13 +1,16 @@
 import { AccountDAOMemory } from '../src/accountDAO'
 import { GetAccount } from '../src/getAccount'
+import { MailerGatewayMemory } from '../src/mailerGateway'
 import { Signup } from '../src/signup'
+import sinon from 'sinon'
 
 let sut: Signup
 let getAccount: GetAccount
 
 beforeEach(() => {
   const accountDAO = new AccountDAOMemory()
-  sut = new Signup(accountDAO)
+  const mailerGateway = new MailerGatewayMemory()
+  sut = new Signup(accountDAO, mailerGateway)
   getAccount = new GetAccount(accountDAO)
 })
 
@@ -19,6 +22,7 @@ test('Deve criar uma conta de passageiro', async () => {
     password: '123456',
     isPassenger: true,
   }
+  const mailerStub = sinon.stub(MailerGatewayMemory.prototype, 'send').resolves()
   const outputSignupt = await sut.execute(input)
   const outputGetAccount = await getAccount.execute(outputSignupt.id)
   expect(outputSignupt.id).toBeDefined()
@@ -27,6 +31,7 @@ test('Deve criar uma conta de passageiro', async () => {
   expect(outputGetAccount.cpf).toBe(input.cpf)
   expect(outputGetAccount.isPassenger).toBe(true)
   expect(outputGetAccount.password).toBe(input.password)
+  mailerStub.restore()
 })
 
 test('Não deve criar uma conta de passageiro com email duplicado', async () => {
