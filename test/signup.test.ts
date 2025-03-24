@@ -2,9 +2,10 @@ import { AccountDAOMemory } from '../src/accountDAO'
 import { Signup } from '../src/signup'
 
 let sut: Signup
+let accountDAO: AccountDAOMemory
 
 beforeAll(() => {
-  const accountDAO = new AccountDAOMemory()
+  accountDAO = new AccountDAOMemory()
   sut = new Signup(accountDAO)
 })
 
@@ -16,8 +17,14 @@ test('Deve criar uma conta de passageiro', async () => {
     password: '123456',
     isPassenger: true,
   }
-  const responseSignup = await sut.execute(input)
-  expect(responseSignup.id).toBeDefined()
+  const outputSignupt = await sut.execute(input)
+  const outputGetAccount = await accountDAO.getAccountById(outputSignupt.id)
+  expect(outputSignupt.id).toBeDefined()
+  expect(outputGetAccount.name).toBe(input.name)
+  expect(outputGetAccount.email).toBe(input.email)
+  expect(outputGetAccount.cpf).toBe(input.cpf)
+  expect(outputGetAccount.isPassenger).toBe(true)
+  expect(outputGetAccount.password).toBe(input.password)
 })
 
 test('Não deve criar uma conta de passageiro com email duplicado', async () => {

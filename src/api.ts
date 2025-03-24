@@ -1,6 +1,7 @@
 import express from 'express'
 import { Signup } from './signup'
 import { AccountDAODatabase } from './accountDAO'
+import { GetAccount } from './getAccount'
 
 const app = express()
 app.use(express.json())
@@ -15,6 +16,15 @@ app.post('/signup', async (req, res) => {
   } catch (err: any) {
     return res.status(422).json({ message: err.message })
   }
+})
+
+app.get('/accounts/:id', async (req, res) => {
+  const id = req.params.id
+  const accountDAO = new AccountDAODatabase()
+  const getAccount = new GetAccount(accountDAO)
+  const account = await getAccount.execute(id)
+  if (!account) return res.status(404).json({ message: 'Account not found' })
+  return res.json(account)
 })
 
 app.listen(3000, () => {

@@ -48,7 +48,7 @@ export class AccountDAOMemory implements AccountDAO {
   }
 
   async getAccountById(accountId: string): Promise<any> {
-    return this.accounts.find((account: any) => account.accountId === accountId)
+    return this.accounts.find((account: any) => account.id === accountId)
   }
 
   async saveAccount(account: any): Promise<void> {

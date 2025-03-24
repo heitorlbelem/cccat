@@ -15,6 +15,13 @@ test('Deve criar uma conta de passageiro', async () => {
   expect(responseSignup.status).toBe(201)
   const outputSignup = responseSignup.data
   expect(outputSignup.accountId).toBeDefined()
+  const responseGetAccount = await axios.get(`http://localhost:3000/accounts/${outputSignup.accountId}`)
+  const outputGetAccount = responseGetAccount.data
+  expect(outputGetAccount.name).toBe(input.name)
+  expect(outputGetAccount.email).toBe(input.email)
+  expect(outputGetAccount.cpf).toBe(input.cpf)
+  expect(outputGetAccount.is_passenger).toBe(true)
+  expect(outputGetAccount.password).toBe(input.password)
 })
 
 test('Não deve criar uma conta de passageiro com email duplicado', async () => {

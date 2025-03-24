@@ -18,8 +18,8 @@ export class Signup {
 
   async execute(input: CreateAccountInput): Promise<{ id: string }> {
     const id = crypto.randomUUID()
-    const account = await this.accountDAO.getAccountByEmail(input.email)
-    if (account) throw new Error('Email already in use')
+    const existingAccount = await this.accountDAO.getAccountByEmail(input.email)
+    if (existingAccount) throw new Error('Email already in use')
     if (!input.name.match(/[a-zA-Z] [a-zA-Z]+/)) throw new Error('Invalid name')
     if (!input.email.match(/^(.+)@(.+)$/)) throw new Error('Invalid email')
     if (!validateCpf(input.cpf)) throw new Error('Invalid cpf')
