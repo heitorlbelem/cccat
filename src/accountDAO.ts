@@ -1,10 +1,8 @@
 import pgp from 'pg-promise'
+import type { SignupData } from './signup'
+import type { GetAccountData } from './getAccount'
 
-export interface AccountDAO {
-  getAccountByEmail(email: string): Promise<any>
-  getAccountById(id: string): Promise<any>
-  saveAccount(account: any): Promise<void>
-}
+export interface AccountDAO extends SignupData, GetAccountData {}
 
 export class AccountDAODatabase implements AccountDAO {
   async getAccountByEmail(email: string): Promise<any> {

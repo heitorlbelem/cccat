@@ -1,12 +1,14 @@
 import { AccountDAOMemory } from '../src/accountDAO'
+import { GetAccount } from '../src/getAccount'
 import { Signup } from '../src/signup'
 
 let sut: Signup
-let accountDAO: AccountDAOMemory
+let getAccount: GetAccount
 
-beforeAll(() => {
-  accountDAO = new AccountDAOMemory()
+beforeEach(() => {
+  const accountDAO = new AccountDAOMemory()
   sut = new Signup(accountDAO)
+  getAccount = new GetAccount(accountDAO)
 })
 
 test('Deve criar uma conta de passageiro', async () => {
@@ -18,7 +20,7 @@ test('Deve criar uma conta de passageiro', async () => {
     isPassenger: true,
   }
   const outputSignupt = await sut.execute(input)
-  const outputGetAccount = await accountDAO.getAccountById(outputSignupt.id)
+  const outputGetAccount = await getAccount.execute(outputSignupt.id)
   expect(outputSignupt.id).toBeDefined()
   expect(outputGetAccount.name).toBe(input.name)
   expect(outputGetAccount.email).toBe(input.email)
