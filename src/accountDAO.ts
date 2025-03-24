@@ -1,22 +1,44 @@
 import pgp from 'pg-promise'
-import type { SignupData } from './signup'
-import type { GetAccountData } from './getAccount'
 
-export interface AccountDAO extends SignupData, GetAccountData {}
+export interface AccountDAO {
+  getAccountByEmail(email: string): Promise<any>
+  getAccountById(id: string): Promise<any>
+  saveAccount(account: any): Promise<void>
+}
 
 export class AccountDAODatabase implements AccountDAO {
   async getAccountByEmail(email: string): Promise<any> {
     const connection = pgp()('postgres://postgres:123456@localhost:5432/app')
     const [account] = await connection.query('select * from ccca.account where email = $1', [email])
     await connection.$pool.end()
-    return account
+    if (!account) return
+    return {
+      id: account.account_id,
+      name: account.name,
+      email: account.email,
+      cpf: account.cpf,
+      carPlate: account.car_plate,
+      isPassenger: account.is_passenger,
+      isDriver: account.is_driver,
+      password: account.password,
+    }
   }
 
   async getAccountById(id: string): Promise<any> {
     const connection = pgp()('postgres://postgres:123456@localhost:5432/app')
     const [account] = await connection.query('select * from ccca.account where account_id = $1', [id])
     await connection.$pool.end()
-    return account
+    if (!account) return
+    return {
+      id: account.account_id,
+      name: account.name,
+      email: account.email,
+      cpf: account.cpf,
+      carPlate: account.car_plate,
+      isPassenger: account.is_passenger,
+      isDriver: account.is_driver,
+      password: account.password,
+    }
   }
 
   async saveAccount(account: any): Promise<void> {
@@ -42,7 +64,8 @@ export class AccountDAOMemory implements AccountDAO {
   accounts: any[] = []
 
   async getAccountByEmail(email: string): Promise<any> {
-    return this.accounts.find((account: any) => account.email === email)
+    const account = this.accounts.find((account: any) => account.email === email)
+    return account
   }
 
   async getAccountById(accountId: string): Promise<any> {

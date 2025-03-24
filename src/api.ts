@@ -12,7 +12,7 @@ app.post('/signup', async (req, res) => {
   const signup = new Signup(accountDAO)
   try {
     const result = await signup.execute(input)
-    return res.status(201).json({ accountId: result.id })
+    return res.status(201).json({ id: result.id })
   } catch (err: any) {
     return res.status(422).json({ message: err.message })
   }

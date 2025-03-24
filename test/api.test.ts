@@ -14,13 +14,13 @@ test('Deve criar uma conta de passageiro', async () => {
   const responseSignup = await axios.post('http://localhost:3000/signup', input)
   expect(responseSignup.status).toBe(201)
   const outputSignup = responseSignup.data
-  expect(outputSignup.accountId).toBeDefined()
-  const responseGetAccount = await axios.get(`http://localhost:3000/accounts/${outputSignup.accountId}`)
+  expect(outputSignup.id).toBeDefined()
+  const responseGetAccount = await axios.get(`http://localhost:3000/accounts/${outputSignup.id}`)
   const outputGetAccount = responseGetAccount.data
   expect(outputGetAccount.name).toBe(input.name)
   expect(outputGetAccount.email).toBe(input.email)
   expect(outputGetAccount.cpf).toBe(input.cpf)
-  expect(outputGetAccount.is_passenger).toBe(true)
+  expect(outputGetAccount.isPassenger).toBe(true)
   expect(outputGetAccount.password).toBe(input.password)
 })
 
